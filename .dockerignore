@@ -1,6 +1,10 @@
 *.env
 *.pub
 
-.trunk\
-jenkins_configuration\
+.trunk/
+
+jenkins_configuration/
 jenkins_agent
+
+root/
+var/
