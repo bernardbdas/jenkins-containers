@@ -13,6 +13,8 @@ services:
       args:
         JENKINS_SERVER_IMAGE_TYPE: ${JENKINS_SERVER_IMAGE_TYPE}
         JENKINS_SERVER_IMAGE_TAG: ${JENKINS_SERVER_IMAGE_TAG}
+        JENKINS_SERVER_WORKDIR: ${JENKINS_SERVER_WORKDIR}
+        JAVA_OPTS: ${JAVA_OPTS}
     env_file:
       - path: .env
         required: false
@@ -20,7 +22,7 @@ services:
       - 8080:8080
       - 50000:50000
     volumes:
-      - /root/jenkins/jenkins-server/jenkins_configuration:/var/jenkins_home:rw
+      - /root/jenkins/jenkins-server/jenkins_configuration:${JENKINS_SERVER_WORKDIR}:rw
       - /var/run/docker.sock:/var/run/docker.sock:rw
 
   jenkins-agent-0:
@@ -38,7 +40,7 @@ services:
         JENKINS_AGENT_IMAGE_TYPE: ${JENKINS_AGENT_IMAGE_TYPE}
         JENKINS_AGENT_IMAGE_TAG: ${JENKINS_AGENT_IMAGE_TAG}
     volumes:
-      - /root/jenkins/jenkins-agent-0/agent:/home/jenkins/agent:rw
+      - /root/jenkins/jenkins-agent-0/agent:${JENKINS_INBOUND_AGENT_WORKDIR}:rw
     env_file:
       - path: .env
         required: true
@@ -60,7 +62,7 @@ services:
         JENKINS_AGENT_IMAGE_TYPE: ${JENKINS_AGENT_IMAGE_TYPE}
         JENKINS_AGENT_IMAGE_TAG: ${JENKINS_AGENT_IMAGE_TAG}
     volumes:
-      - /root/jenkins/jenkins-agent-1/agent:/home/jenkins/agent:rw
+      - /root/jenkins/jenkins-agent-1/agent:${JENKINS_INBOUND_AGENT_WORKDIR}:rw
     env_file:
       - path: .env
         required: true
