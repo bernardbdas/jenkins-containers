@@ -9,7 +9,8 @@ COPY --chown=jenkins "${JENKINS_AGENT_SSH_PUBKEY}" "${JENKINS_BASE_REPO}"/.ssh/j
 # Install Docker (example for Alpine Linux)
 RUN apk update && apk add docker openrc
 RUN rc-update add docker boot 
-# RUN service docker start
+RUN touch /run/openrc/softlevel
+RUN service docker start
 
 # Copy the SSH public key
 RUN mkdir -p /root/.ssh 
