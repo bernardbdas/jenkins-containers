@@ -1,0 +1,95 @@
+services:
+  jenkins-server:
+    container_name: jenkins-server
+    networks:
+      jenkins-network:
+        aliases:
+          - jenkins.service
+    user: root
+    privileged: true
+    build:
+      context: .
+      dockerfile: server.Dockerfile
+      args:
+        JENKINS_SERVER_IMAGE_TYPE: ${JENKINS_SERVER_IMAGE_TYPE}
+        JENKINS_SERVER_IMAGE_TAG: ${JENKINS_SERVER_IMAGE_TAG}
+    env_file:
+      - path: .env
+        required: false
+    ports:
+      - 8080:8080
+      - 50000:50000
+    volumes:
+      - /root/jenkins/jenkins-server/jenkins_configuration:/var/jenkins_home:rw
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+
+  jenkins-agent-0:
+    container_name: jenkins-agent-0
+    networks:
+      jenkins-network:
+        aliases:
+          - jenkins-agent-0.service
+    user: root
+    privileged: true
+    build:
+      context: .
+      dockerfile: agent.Dockerfile
+      args:
+        JENKINS_AGENT_IMAGE_TYPE: ${JENKINS_AGENT_IMAGE_TYPE}
+        JENKINS_AGENT_IMAGE_TAG: ${JENKINS_AGENT_IMAGE_TAG}
+    volumes:
+      - /root/jenkins/jenkins-agent-0/agent:/home/jenkins/agent:rw
+    env_file:
+      - path: .env
+        required: true
+    expose:
+      - 22
+
+  jenkins-agent-1:
+    container_name: jenkins-agent-1
+    networks:
+      jenkins-network:
+        aliases:
+          - jenkins-agent-1.service
+    user: root
+    privileged: true
+    build:
+      context: .
+      dockerfile: agent.Dockerfile
+      args:
+        JENKINS_AGENT_IMAGE_TYPE: ${JENKINS_AGENT_IMAGE_TYPE}
+        JENKINS_AGENT_IMAGE_TAG: ${JENKINS_AGENT_IMAGE_TAG}
+    volumes:
+      - /root/jenkins/jenkins-agent-1/agent:/home/jenkins/agent:rw
+    env_file:
+      - path: .env
+        required: true
+    expose:
+      - 22
+
+  jenkins-inbound-agent-0:
+    container_name: jenkins-inbound-agent-0
+    networks:
+      jenkins-network:
+        aliases:
+          - jenkins-inbound-agent-0.service
+    user: root
+    privileged: true
+    build:
+      context: .
+      dockerfile: inbound-agent.Dockerfile
+      args:
+        JENKINS_INBOND_AGENT_IMAGE_TYPE: ${JENKINS_INBOUND_AGENT_IMAGE_TYPE}
+        JENKINS_INBOND_AGENT_IMAGE_TAG: ${JENKINS_INBOUND_AGENT_IMAGE_TAG}
+        JENKINS_AGENT_WORKDIR: ${JENKINS_INBOUND_AGENT_WORKDIR}
+    volumes:
+      - /root/jenkins/jenkins-inbound-agent-0/agent:${JENKINS_INBOUND_AGENT_WORKDIR}:rw
+    env_file:
+      - path: .env
+        required: true
+    expose:
+      - 22
+
+networks:
+  jenkins-network:
+    driver: bridge
