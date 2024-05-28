@@ -14,7 +14,7 @@ services:
         JENKINS_SERVER_IMAGE_TYPE: ${JENKINS_SERVER_IMAGE_TYPE}
         JENKINS_SERVER_IMAGE_TAG: ${JENKINS_SERVER_IMAGE_TAG}
         JENKINS_SERVER_WORKDIR: ${JENKINS_SERVER_WORKDIR}
-        JAVA_OPTS: ${JAVA_OPTS}
+        # JAVA_OPTS: ${JAVA_OPTS}
         JENKINS_BASE_REPO: ${JENKINS_BASE_REPO}
     env_file:
       - path: .env
@@ -76,34 +76,34 @@ services:
     expose:
       - 22
 
-  jenkins-inbound-agent-0:
-    container_name: jenkins-inbound-agent-0
-    networks:
-      jenkins-network:
-        aliases:
-          - jenkins-inbound-agent-0.service
-    user: root
-    privileged: true
-    build:
-      context: .
-      dockerfile: inbound-agent.Dockerfile
-      args:
-        JENKINS_INBOND_AGENT_IMAGE_TYPE: ${JENKINS_INBOUND_AGENT_IMAGE_TYPE}
-        JENKINS_INBOND_AGENT_IMAGE_TAG: ${JENKINS_INBOUND_AGENT_IMAGE_TAG}
-        JENKINS_AGENT_WORKDIR: ${JENKINS_INBOUND_AGENT_WORKDIR}
-        JENKINS_BASE_REPO: ${JENKINS_BASE_REPO}
-    env_file:
-      - path: .env
-        required: true
-    volumes:
-      - ${JENKINS_BASE_REPO}/jenkins-inbound-agent-0/agent:${JENKINS_INBOUND_AGENT_WORKDIR}:rw
-    ports:
-      - 8090:50000
-    expose:
-      - 22
-      - 80
-      - 443
-      - 8080
+  # jenkins-inbound-agent-0:
+  #   container_name: jenkins-inbound-agent-0
+  #   networks:
+  #     jenkins-network:
+  #       aliases:
+  #         - jenkins-inbound-agent-0.service
+  #   user: root
+  #   privileged: true
+  #   build:
+  #     context: .
+  #     dockerfile: inbound-agent.Dockerfile
+  #     args:
+  #       JENKINS_INBOND_AGENT_IMAGE_TYPE: ${JENKINS_INBOUND_AGENT_IMAGE_TYPE}
+  #       JENKINS_INBOND_AGENT_IMAGE_TAG: ${JENKINS_INBOUND_AGENT_IMAGE_TAG}
+  #       JENKINS_AGENT_WORKDIR: ${JENKINS_INBOUND_AGENT_WORKDIR}
+  #       JENKINS_BASE_REPO: ${JENKINS_BASE_REPO}
+  #   env_file:
+  #     - path: .env
+  #       required: true
+  #   volumes:
+  #     - ${JENKINS_BASE_REPO}/jenkins-inbound-agent-0/agent:${JENKINS_INBOUND_AGENT_WORKDIR}:rw
+  #   ports:
+  #     - 8090:50000
+  #   expose:
+  #     - 22
+  #     - 80
+  #     - 443
+  #     - 8080
 
 networks:
   jenkins-network:
