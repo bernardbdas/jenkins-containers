@@ -15,15 +15,16 @@ services:
         JENKINS_SERVER_IMAGE_TAG: ${JENKINS_SERVER_IMAGE_TAG}
         JENKINS_SERVER_WORKDIR: ${JENKINS_SERVER_WORKDIR}
         JAVA_OPTS: ${JAVA_OPTS}
+        JENKINS_BASE_REPO: ${JENKINS_BASE_REPO}
     env_file:
       - path: .env
         required: false
+    volumes:
+      - ${JENKINS_BASE_REPO}/jenkins_configuration:${JENKINS_SERVER_WORKDIR}:rw
+      - ./var/run/docker.sock:/var/run/docker.sock:rw
     ports:
       - 8080:8080
       - 50000:50000
-    volumes:
-      - /root/jenkins/jenkins-server/jenkins_configuration:${JENKINS_SERVER_WORKDIR}:rw
-      - /var/run/docker.sock:/var/run/docker.sock:rw
 
   jenkins-agent-0:
     container_name: jenkins-agent-0
@@ -39,11 +40,14 @@ services:
       args:
         JENKINS_AGENT_IMAGE_TYPE: ${JENKINS_AGENT_IMAGE_TYPE}
         JENKINS_AGENT_IMAGE_TAG: ${JENKINS_AGENT_IMAGE_TAG}
-    volumes:
-      - /root/jenkins/jenkins-agent-0/agent:${JENKINS_INBOUND_AGENT_WORKDIR}:rw
+        JENKINS_AGENT_WORKDIR: ${JENKINS_INBOUND_AGENT_WORKDIR}
+        JENKINS_AGENT_SSH_PUBKEY: ${JENKINS_AGENT_SSH_PUBKEY}
+        JENKINS_BASE_REPO: ${JENKINS_BASE_REPO}
     env_file:
       - path: .env
         required: true
+    volumes:
+      - ${JENKINS_BASE_REPO}/jenkins-agent-0/agent:${JENKINS_INBOUND_AGENT_WORKDIR}:rw
     expose:
       - 22
 
@@ -61,11 +65,14 @@ services:
       args:
         JENKINS_AGENT_IMAGE_TYPE: ${JENKINS_AGENT_IMAGE_TYPE}
         JENKINS_AGENT_IMAGE_TAG: ${JENKINS_AGENT_IMAGE_TAG}
-    volumes:
-      - /root/jenkins/jenkins-agent-1/agent:${JENKINS_INBOUND_AGENT_WORKDIR}:rw
+        JENKINS_AGENT_WORKDIR: ${JENKINS_INBOUND_AGENT_WORKDIR}
+        JENKINS_AGENT_SSH_PUBKEY: ${JENKINS_AGENT_SSH_PUBKEY}
+        JENKINS_BASE_REPO: ${JENKINS_BASE_REPO}
     env_file:
       - path: .env
         required: true
+    volumes:
+      - ${JENKINS_BASE_REPO}/jenkins-agent-1/agent:${JENKINS_INBOUND_AGENT_WORKDIR}:rw
     expose:
       - 22
 
@@ -84,13 +91,19 @@ services:
         JENKINS_INBOND_AGENT_IMAGE_TYPE: ${JENKINS_INBOUND_AGENT_IMAGE_TYPE}
         JENKINS_INBOND_AGENT_IMAGE_TAG: ${JENKINS_INBOUND_AGENT_IMAGE_TAG}
         JENKINS_AGENT_WORKDIR: ${JENKINS_INBOUND_AGENT_WORKDIR}
-    volumes:
-      - /root/jenkins/jenkins-inbound-agent-0/agent:${JENKINS_INBOUND_AGENT_WORKDIR}:rw
+        JENKINS_BASE_REPO: ${JENKINS_BASE_REPO}
     env_file:
       - path: .env
         required: true
+    volumes:
+      - ${JENKINS_BASE_REPO}/jenkins-inbound-agent-0/agent:${JENKINS_INBOUND_AGENT_WORKDIR}:rw
+    ports:
+      - 8090:50000
     expose:
       - 22
+      - 80
+      - 443
+      - 8080
 
 networks:
   jenkins-network:
