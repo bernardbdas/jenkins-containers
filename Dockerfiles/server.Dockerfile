@@ -14,7 +14,7 @@ RUN adduser -u 1001 -D -h ${WORKDIR} appuser
 
 WORKDIR ${WORKDIR}
 
-RUN chown -R appuser:appuser .
+RUN chown -R appuser:appuser ${WORKDIR}
 
 USER appuser
 
