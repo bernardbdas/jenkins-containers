@@ -1,30 +1,34 @@
 services:
   jenkins-server:
-    container_name: jenkins-server
+    container_name: jenkins-main
     networks:
       jenkins-network:
         aliases:
-          - jenkins.service
+          - jenkins-main.service
     user: root
     privileged: true
+    image: bernardbdas/jenkins-server
     build:
-      context: .
+      context: Dockerfiles
       dockerfile: server.Dockerfile
       args:
-        JENKINS_SERVER_IMAGE_TYPE: ${JENKINS_SERVER_IMAGE_TYPE}
-        JENKINS_SERVER_IMAGE_TAG: ${JENKINS_SERVER_IMAGE_TAG}
-        JENKINS_SERVER_WORKDIR: ${JENKINS_SERVER_WORKDIR}
+        # CONTAINER_NAME: ${JENKINS_SERVER_CONTAINER_NAME}
+        IMAGE_TYPE: ${JENKINS_SERVER_IMAGE_TYPE}
+        IMAGE_TAG: ${JENKINS_SERVER_IMAGE_TAG}
+        WORKDIR: ${JENKINS_SERVER_WORKDIR}
+        HOSTDIR: ${JENKINS_SERVER_HOSTDIR}
         # JAVA_OPTS: ${JAVA_OPTS}
-        JENKINS_BASE_REPO: ${JENKINS_BASE_REPO}
     env_file:
       - path: .env
-        required: false
+        required: true
     volumes:
-      - ${JENKINS_BASE_REPO}/jenkins_configuration:${JENKINS_SERVER_WORKDIR}:rw
-      - ./var/run/docker.sock:/var/run/docker.sock:rw
+      - ${JENKINS_SERVER_HOSTDIR}:${JENKINS_SERVER_WORKDIR}:rw
     ports:
       - 8080:8080
       - 50000:50000
+    # environment:
+    #   CONTAINER_NAME: jenkins-main
+    #   HOSTDIR: jenkins-main.container
 
   jenkins-agent-0:
     container_name: jenkins-agent-0
@@ -34,22 +38,31 @@ services:
           - jenkins-agent-0.service
     user: root
     privileged: true
+    image: bernardbdas/jenkins-ssh-agent
     build:
-      context: .
+      context: Dockerfiles
       dockerfile: agent.Dockerfile
       args:
-        JENKINS_AGENT_IMAGE_TYPE: ${JENKINS_AGENT_IMAGE_TYPE}
-        JENKINS_AGENT_IMAGE_TAG: ${JENKINS_AGENT_IMAGE_TAG}
-        JENKINS_AGENT_WORKDIR: ${JENKINS_INBOUND_AGENT_WORKDIR}
+        # CONTAINER_NAME: ${JENKINS_AGENT_CONTAINER_NAME}
+        IMAGE_TYPE: ${JENKINS_SERVER_IMAGE_TYPE}
+        IMAGE_TAG: ${JENKINS_SERVER_IMAGE_TAG}
+        WORKDIR: ${JENKINS_SERVER_WORKDIR}
+        HOSTDIR: /0-${JENKINS_AGENT_HOSTDIR}
         JENKINS_AGENT_SSH_PUBKEY: ${JENKINS_AGENT_SSH_PUBKEY}
-        JENKINS_BASE_REPO: ${JENKINS_BASE_REPO}
     env_file:
       - path: .env
         required: true
     volumes:
-      - ${JENKINS_BASE_REPO}/jenkins-agent-0/agent:${JENKINS_INBOUND_AGENT_WORKDIR}:rw
+      - /0-${JENKINS_AGENT_HOSTDIR}:${JENKINS_AGENT_WORKDIR}:rw
+      - /0-${JENKINS_AGENT_HOSTDIR}/var/run/docker.sock:/var/run/docker.sock:rw
     expose:
       - 22
+    ports:
+      - 8081:8080
+      - 50001:50000
+    # environment:
+    #   CONTAINER_NAME: jenkins-agent-0
+    #   HOSTDIR: jenkins-agent-0.container
 
   jenkins-agent-1:
     container_name: jenkins-agent-1
@@ -59,51 +72,31 @@ services:
           - jenkins-agent-1.service
     user: root
     privileged: true
+    image: bernardbdas/jenkins-ssh-agent
     build:
-      context: .
+      context: Dockerfiles
       dockerfile: agent.Dockerfile
       args:
-        JENKINS_AGENT_IMAGE_TYPE: ${JENKINS_AGENT_IMAGE_TYPE}
-        JENKINS_AGENT_IMAGE_TAG: ${JENKINS_AGENT_IMAGE_TAG}
-        JENKINS_AGENT_WORKDIR: ${JENKINS_INBOUND_AGENT_WORKDIR}
+        # CONTAINER_NAME: ${JENKINS_AGENT_CONTAINER_NAME}-1
+        IMAGE_TYPE: ${JENKINS_SERVER_IMAGE_TYPE}
+        IMAGE_TAG: ${JENKINS_SERVER_IMAGE_TAG}
+        WORKDIR: ${JENKINS_SERVER_WORKDIR}
+        HOSTDIR: /1-${JENKINS_AGENT_HOSTDIR}
         JENKINS_AGENT_SSH_PUBKEY: ${JENKINS_AGENT_SSH_PUBKEY}
-        JENKINS_BASE_REPO: ${JENKINS_BASE_REPO}
     env_file:
       - path: .env
         required: true
     volumes:
-      - ${JENKINS_BASE_REPO}/jenkins-agent-1/agent:${JENKINS_INBOUND_AGENT_WORKDIR}:rw
+      - /1-${JENKINS_AGENT_HOSTDIR}:${JENKINS_AGENT_WORKDIR}:rw
+      - /1-${JENKINS_AGENT_HOSTDIR}/var/run/docker.sock:/var/run/docker.sock:rw
     expose:
       - 22
-
-  # jenkins-inbound-agent-0:
-  #   container_name: jenkins-inbound-agent-0
-  #   networks:
-  #     jenkins-network:
-  #       aliases:
-  #         - jenkins-inbound-agent-0.service
-  #   user: root
-  #   privileged: true
-  #   build:
-  #     context: .
-  #     dockerfile: inbound-agent.Dockerfile
-  #     args:
-  #       JENKINS_INBOND_AGENT_IMAGE_TYPE: ${JENKINS_INBOUND_AGENT_IMAGE_TYPE}
-  #       JENKINS_INBOND_AGENT_IMAGE_TAG: ${JENKINS_INBOUND_AGENT_IMAGE_TAG}
-  #       JENKINS_AGENT_WORKDIR: ${JENKINS_INBOUND_AGENT_WORKDIR}
-  #       JENKINS_BASE_REPO: ${JENKINS_BASE_REPO}
-  #   env_file:
-  #     - path: .env
-  #       required: true
-  #   volumes:
-  #     - ${JENKINS_BASE_REPO}/jenkins-inbound-agent-0/agent:${JENKINS_INBOUND_AGENT_WORKDIR}:rw
-  #   ports:
-  #     - 8090:50000
-  #   expose:
-  #     - 22
-  #     - 80
-  #     - 443
-  #     - 8080
+    ports:
+      - 8082:8080
+      - 50002:50000
+    # environment:
+    #   CONTAINER_NAME: jenkins-agent-1
+    #   HOSTDIR: jenkins-agent-1.container
 
 networks:
   jenkins-network:
