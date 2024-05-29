@@ -22,7 +22,7 @@ services:
       - path: .env
         required: true
     volumes:
-      - ${JENKINS_SERVER_HOSTDIR}:${JENKINS_SERVER_WORKDIR}:rw
+      - ${JENKINS_SERVER_HOSTDIR}:${JENKINS_SERVER_WORKDIR}
     ports:
       - 8080:8080
       - 50000:50000
@@ -53,8 +53,8 @@ services:
       - path: .env
         required: true
     volumes:
-      - /0-${JENKINS_AGENT_HOSTDIR}:${JENKINS_AGENT_WORKDIR}:rw
-      - /0-${JENKINS_AGENT_HOSTDIR}/var/run/docker.sock:/var/run/docker.sock:rw
+      - /0-${JENKINS_AGENT_HOSTDIR}:${JENKINS_AGENT_WORKDIR}
+      - /0-${JENKINS_AGENT_HOSTDIR}/var/run/docker.sock:/var/run/docker.sock
     expose:
       - 22
     ports:
@@ -87,8 +87,8 @@ services:
       - path: .env
         required: true
     volumes:
-      - /1-${JENKINS_AGENT_HOSTDIR}:${JENKINS_AGENT_WORKDIR}:rw
-      - /1-${JENKINS_AGENT_HOSTDIR}/var/run/docker.sock:/var/run/docker.sock:rw
+      - /1-${JENKINS_AGENT_HOSTDIR}:${JENKINS_AGENT_WORKDIR}
+      - /1-${JENKINS_AGENT_HOSTDIR}/var/run/docker.sock:/var/run/docker.sock
     expose:
       - 22
     ports:
