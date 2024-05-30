@@ -22,15 +22,16 @@ services:
       - path: .env
         required: true
     volumes:
-      - ${JENKINS_SERVER_HOSTDIR}
-      - ${JENKINS_SERVER_WORKDIR}:rwx
-      - ${JENKINS_PLUGINS_PATH}:/usr/share/jenkins/ref/plugins.txt:rwx
+      - ${JENKINS_SERVER_HOSTDIR}:${JENKINS_SERVER_WORKDIR}
+      # - ${JENKINS_PLUGINS_PATH}:/usr/share/jenkins/ref/
+      - ${JENKINS_SERVER_HOSTDIR}/var/run/docker.sock:/var/run/docker.sock
     expose:
       - 22
       - 80
     ports:
       - 8080:8080
       - 50000:50000
+      - 2375:2375
     # environment:
     #   CONTAINER_NAME: jenkins-main
     #   HOSTDIR: jenkins-main.container
@@ -52,15 +53,15 @@ services:
         IMAGE_TYPE: ${JENKINS_SERVER_IMAGE_TYPE}
         IMAGE_TAG: ${JENKINS_SERVER_IMAGE_TAG}
         WORKDIR: ${JENKINS_SERVER_WORKDIR}
-        HOSTDIR: /${JENKINS_AGENT_HOSTDIR}-0
+        HOSTDIR: ${JENKINS_AGENT_HOSTDIR}-0
         JAVA_OPTS: ${JAVA_OPTS}
         JENKINS_AGENT_SSH_PUBKEY: ${JENKINS_AGENT_SSH_PUBKEY}
     env_file:
       - path: .env
         required: true
     volumes:
-      - ${JENKINS_AGENT_HOSTDIR}-0:${JENKINS_AGENT_WORKDIR}:rwx
-      - ${JENKINS_AGENT_HOSTDIR}-0/var/run/docker.sock:/var/run/docker.sock:rwx
+      - ${JENKINS_AGENT_HOSTDIR}-0:${JENKINS_AGENT_WORKDIR}
+      - ${JENKINS_AGENT_HOSTDIR}-0/var/run/docker.sock:/var/run/docker.sock
     expose:
       - 22
       - 80
@@ -89,15 +90,15 @@ services:
         IMAGE_TYPE: ${JENKINS_SERVER_IMAGE_TYPE}
         IMAGE_TAG: ${JENKINS_SERVER_IMAGE_TAG}
         WORKDIR: ${JENKINS_SERVER_WORKDIR}
-        HOSTDIR: /${JENKINS_AGENT_HOSTDIR}-1
+        HOSTDIR: ${JENKINS_AGENT_HOSTDIR}-1
         JAVA_OPTS: ${JAVA_OPTS}
         JENKINS_AGENT_SSH_PUBKEY: ${JENKINS_AGENT_SSH_PUBKEY}
     env_file:
       - path: .env
         required: true
     volumes:
-      - ${JENKINS_AGENT_HOSTDIR}-1:${JENKINS_AGENT_WORKDIR}:rwx
-      - ${JENKINS_AGENT_HOSTDIR}-1/var/run/docker.sock:/var/run/docker.sock:rwx
+      - ${JENKINS_AGENT_HOSTDIR}-1:${JENKINS_AGENT_WORKDIR}
+      - ${JENKINS_AGENT_HOSTDIR}-1/var/run/docker.sock:/var/run/docker.sock
     expose:
       - 22
       - 80

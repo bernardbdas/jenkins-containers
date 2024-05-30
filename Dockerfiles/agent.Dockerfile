@@ -6,7 +6,6 @@ ARG HOSTDIR
 
 FROM jenkins/${IMAGE_TYPE}:${IMAGE_TAG} as jenkins-ssh-agent
 
-
 ENV WORKDIR="/home/jenkins/agent"
 
 USER root

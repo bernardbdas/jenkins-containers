@@ -16,6 +16,10 @@ RUN echo $JENKINS_VERSION > /usr/share/jenkins/ref/jenkins.install.UpgradeWizard
 
 RUN echo $JENKINS_VERSION > /usr/share/jenkins/ref/jenkins.install.InstallUtil.lastExecVersion
 
+RUN apk add --update --no-cache docker docker-compose openrc
+
+RUN rc-update add docker boot
+
 RUN adduser -u 1001 -D -h ${WORKDIR} appuser
 
 WORKDIR ${WORKDIR}
