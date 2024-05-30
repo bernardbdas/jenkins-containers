@@ -22,8 +22,9 @@ services:
       - path: .env
         required: true
     volumes:
-      - .${JENKINS_SERVER_HOSTDIR}:${JENKINS_SERVER_WORKDIR}:rwx
-      - .${JENKINS_PLUGINS_PATH}:/usr/share/jenkins/ref/plugins.txt:rwx
+      - ${JENKINS_SERVER_HOSTDIR}
+      - ${JENKINS_SERVER_WORKDIR}:rwx
+      - ${JENKINS_PLUGINS_PATH}:/usr/share/jenkins/ref/plugins.txt:rwx
     expose:
       - 22
       - 80
@@ -58,8 +59,8 @@ services:
       - path: .env
         required: true
     volumes:
-      - .${JENKINS_AGENT_HOSTDIR}-0:${JENKINS_AGENT_WORKDIR}:rwx
-      - .${JENKINS_AGENT_HOSTDIR}-0/var/run/docker.sock:/var/run/docker.sock:rwx
+      - ${JENKINS_AGENT_HOSTDIR}-0:${JENKINS_AGENT_WORKDIR}:rwx
+      - ${JENKINS_AGENT_HOSTDIR}-0/var/run/docker.sock:/var/run/docker.sock:rwx
     expose:
       - 22
       - 80
@@ -95,8 +96,8 @@ services:
       - path: .env
         required: true
     volumes:
-      - .${JENKINS_AGENT_HOSTDIR}-1:${JENKINS_AGENT_WORKDIR}:rwx
-      - .${JENKINS_AGENT_HOSTDIR}-1/var/run/docker.sock:/var/run/docker.sock:rwx
+      - ${JENKINS_AGENT_HOSTDIR}-1:${JENKINS_AGENT_WORKDIR}:rwx
+      - ${JENKINS_AGENT_HOSTDIR}-1/var/run/docker.sock:/var/run/docker.sock:rwx
     expose:
       - 22
       - 80
