@@ -6,6 +6,9 @@
 jenkins_configuration/
 jenkins_agent
 
+*-key
+*-key.pub
+
 root/
 var/
 
