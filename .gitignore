@@ -8,3 +8,5 @@ jenkins_agent
 
 root/
 var/
+
+jenkins-*/

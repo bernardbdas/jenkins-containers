@@ -10,6 +10,12 @@ ENV WORKDIR="/var/jenkins_home"
 
 USER root
 
+RUN sh -c jenkins-plugin-cli -f /usr/share/jenkins/ref/plugins.txt
+
+RUN echo $JENKINS_VERSION > /usr/share/jenkins/ref/jenkins.install.UpgradeWizard.state
+
+RUN echo $JENKINS_VERSION > /usr/share/jenkins/ref/jenkins.install.InstallUtil.lastExecVersion
+
 RUN adduser -u 1001 -D -h ${WORKDIR} appuser
 
 WORKDIR ${WORKDIR}
